@@ -394,12 +394,12 @@ MonoBehaviour:
       m_Calls: []
   m_FontData:
     m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
-    m_FontSize: 14
+    m_FontSize: 60
     m_FontStyle: 0
     m_BestFit: 0
-    m_MinSize: 10
-    m_MaxSize: 40
-    m_Alignment: 0
+    m_MinSize: 6
+    m_MaxSize: 60
+    m_Alignment: 3
     m_AlignByGeometry: 0
     m_RichText: 0
     m_HorizontalOverflow: 1
@@ -1033,8 +1033,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f9662bd399e587f45ba2129846113ccf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  serverPrefab: {fileID: 0}
-  ControllerPrefab: {fileID: 0}
+  serverPrefab: {fileID: 1609221711552407871, guid: 1c5bb7efba60ce94d9ee191b2423da64, type: 3}
+  ControllerPrefab: {fileID: 7503299245405622812, guid: 252c2a1ac51305946a817b60e5e27829, type: 3}
 --- !u!4 &1979997974
 Transform:
   m_ObjectHideFlags: 0
