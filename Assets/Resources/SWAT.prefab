@@ -1,5 +1,35 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &1594130564
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1594130565}
+  m_Layer: 0
+  m_Name: GroundCheck
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1594130565
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1594130564}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 5433208581921388438}
+  m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &146007907212754468
 GameObject:
   m_ObjectHideFlags: 0
@@ -1277,6 +1307,7 @@ Transform:
   - {fileID: 5322984042998861299}
   - {fileID: 7457199485567519690}
   - {fileID: 8136993015205249368}
+  - {fileID: 1594130565}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -1404,7 +1435,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _maxLife: 100
   _speed: 5
+  _jumpForce: 5
   _dmg: 10
+  matHead: {fileID: 0}
+  matBody: {fileID: 0}
+  groundCheck: {fileID: 1594130565}
+  groundRadius: 0.5
+  groundMask:
+    serializedVersion: 2
+    m_Bits: 64
 --- !u!1 &4707814597915174110
 GameObject:
   m_ObjectHideFlags: 0
@@ -1571,6 +1610,7 @@ GameObject:
   - component: {fileID: 5322984042998861299}
   - component: {fileID: 5322984042998861297}
   - component: {fileID: 5322984042998861298}
+  - component: {fileID: 1307099024}
   m_Layer: 0
   m_Name: Camera
   m_TagString: Untagged
@@ -1643,6 +1683,20 @@ AudioListener:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5322984042998861260}
   m_Enabled: 1
+--- !u!114 &1307099024
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5322984042998861260}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c4feab496ac3ec44abaa28ca924cc8ab, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerTransform: {fileID: 5433208581921388438}
+  sensitivity: 100
 --- !u!1 &5395906053978390030
 GameObject:
   m_ObjectHideFlags: 0

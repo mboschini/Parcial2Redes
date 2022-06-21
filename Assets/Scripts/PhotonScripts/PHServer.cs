@@ -11,6 +11,8 @@ public class PHServer : MonoBehaviourPunCallbacks
     Player _phServer;
 
     [SerializeField] CharacterA _characterPrefab;
+    [SerializeField] Transform _player1pos;
+    [SerializeField] Transform _player2pos;
 
     //diccionario de player que tengo en mi juego,
     //cuando recibo la peticion de cliente(player) en mi diccionario,
@@ -71,7 +73,7 @@ public class PHServer : MonoBehaviourPunCallbacks
 
         //se ejecuta en el servidor original, por lo que se puede tener un manager que gestione las posiciones
         //de todos los players y se llamaria desde aca.
-        CharacterA newCharacter = PhotonNetwork.Instantiate(_characterPrefab.name, Vector3.zero,Quaternion.identity)
+        CharacterA newCharacter = PhotonNetwork.Instantiate(_characterPrefab.name, _player1pos.position, _player1pos.rotation)
                                                             .GetComponent<CharacterA>()
                                                             .SetInitialParams(newPlayer);
 
@@ -83,6 +85,11 @@ public class PHServer : MonoBehaviourPunCallbacks
     public void RequestMove(Player player, Vector3 dir)
     {
         photonView.RPC("RPC_Move", _phServer, player, dir);
+    }
+
+    public void RequestJump(Player player)
+    {
+        photonView.RPC("RPC_Jump", _phServer, player);
     }
 
     public void RequestShoot(Player player)
@@ -109,6 +116,15 @@ public class PHServer : MonoBehaviourPunCallbacks
         }
     }
 
+    [PunRPC]
+    public void RPC_Jump(Player playerRequest)
+    {
+        if (_dictionaryModels.ContainsKey(playerRequest))
+        {
+            _dictionaryModels[playerRequest].Jump();
+        }
+    }
+    
     [PunRPC]
     public void RPC_Shoot(Player playerRequest)
     {

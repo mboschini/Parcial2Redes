@@ -12,18 +12,20 @@ public class CharacterA : MonoBehaviourPun
     [SerializeField] float _maxLife;
     float _currentLife;
     [SerializeField] float _speed;
+    [SerializeField] float _jumpForce;
     [SerializeField] float _dmg;
 
-    //Material _myMaterial;
+    [SerializeField] Material matHead;
+    [SerializeField] Material matBody;
+    [SerializeField] Transform groundCheck;
+    [SerializeField] float groundRadius;
+    [SerializeField] LayerMask groundMask;
+    bool isGrounded;
 
-    //[SerializeField] RaycastBullet _bulletPrefab;
-    //[SerializeField] Transform _bulletSpawnerTranform;
-
-    // Start is called before the first frame update
-    void Awake()
+    private void Awake()
     {
-        //_myMaterial = GetComponent<Renderer>().material;
-        //_myMaterial.color = Color.red;
+        matHead.color = Color.red;
+        matBody.color = Color.red;
     }
 
     //se ejecuta en el servidor original y llama por el rpc al cliente local
@@ -32,7 +34,8 @@ public class CharacterA : MonoBehaviourPun
         _owner = player;
         _rb = GetComponent<Rigidbody>();
         _currentLife = _maxLife;
-        //_myMaterial.color = Color.yellow;
+        matHead.color = Color.yellow;
+        matBody.color = Color.yellow;
 
         photonView.RPC("SetLocalParams", _owner, _currentLife);
 
@@ -45,15 +48,25 @@ public class CharacterA : MonoBehaviourPun
     void SetLocalParams(float life) 
     {
         _currentLife = _maxLife = life;
-
-        //_myMaterial.color = Color.blue;
+        matHead.color = Color.blue;
+        matBody.color = Color.blue;
     }
 
     public void Move(Vector3 dir)
     {
-        _rb.MovePosition(_rb.position + dir * Time.deltaTime);
+        Debug.Log(dir *_speed * Time.deltaTime);
+        _rb.MovePosition(_rb.position + dir * _speed * Time.deltaTime);
     }
 
+    public void Jump()
+    {
+        isGrounded = Physics.CheckSphere(groundCheck.position, groundRadius, groundMask);
+        float vel = _rb.velocity.y;
+        vel = vel * vel;
+        if (isGrounded && vel <= 0.15f)
+            _rb.AddForce(Vector3.up * _jumpForce, ForceMode.VelocityChange);
+    }
+    
     public void Shoot()
     {
         //shoot behaviour
