@@ -25,6 +25,7 @@ public class ControllerA : MonoBehaviourPun
             //disparar
         }
     }
+
     private void FixedUpdate()
     {
         if (_x != 0)
@@ -36,4 +37,11 @@ public class ControllerA : MonoBehaviourPun
     }
 
     //agregar timeslicing de toma de inputs PackagePerSecond del phserver, no para los inputs getkeydown
+
+
+    private void OnApplicationQuit()
+    {
+        PHServer.serverInstance.RequestDisconnection(_localPlayer);
+        PhotonNetwork.Disconnect();
+    }
 }

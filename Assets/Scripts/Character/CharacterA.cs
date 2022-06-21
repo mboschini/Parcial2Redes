@@ -14,16 +14,16 @@ public class CharacterA : MonoBehaviourPun
     [SerializeField] float _speed;
     [SerializeField] float _dmg;
 
-    Material _myMaterial;
+    //Material _myMaterial;
 
-    [SerializeField] RaycastBullet _bulletPrefab;
-    [SerializeField] Transform _bulletSpawnerTranform;
+    //[SerializeField] RaycastBullet _bulletPrefab;
+    //[SerializeField] Transform _bulletSpawnerTranform;
 
     // Start is called before the first frame update
     void Awake()
     {
-        _myMaterial = GetComponent<Renderer>().material;
-        _myMaterial.color = Color.red;
+        //_myMaterial = GetComponent<Renderer>().material;
+        //_myMaterial.color = Color.red;
     }
 
     //se ejecuta en el servidor original y llama por el rpc al cliente local
@@ -32,7 +32,7 @@ public class CharacterA : MonoBehaviourPun
         _owner = player;
         _rb = GetComponent<Rigidbody>();
         _currentLife = _maxLife;
-        _myMaterial.color = Color.yellow;
+        //_myMaterial.color = Color.yellow;
 
         photonView.RPC("SetLocalParams", _owner, _currentLife);
 
@@ -46,7 +46,7 @@ public class CharacterA : MonoBehaviourPun
     {
         _currentLife = _maxLife = life;
 
-        _myMaterial.color = Color.blue;
+        //_myMaterial.color = Color.blue;
     }
 
     public void Move(Vector3 dir)
@@ -57,9 +57,9 @@ public class CharacterA : MonoBehaviourPun
     public void Shoot()
     {
         //shoot behaviour
-        PhotonNetwork.Instantiate(_bulletPrefab.name, _bulletSpawnerTranform.position, transform.rotation)
-                                    .GetComponent<RaycastBullet>()
-                                    .SetDmg(_dmg);
+        //PhotonNetwork.Instantiate(_bulletPrefab.name, _bulletSpawnerTranform.position, transform.rotation)
+        //                            .GetComponent<RaycastBullet>()
+        //                            .SetDmg(_dmg);
     }
 
     public void TakeDamage(float dmg)
@@ -67,7 +67,7 @@ public class CharacterA : MonoBehaviourPun
         _currentLife -= dmg;
         if(_currentLife <= 0)
         {
-            PHServer.serverInstance.PlayerDisconnect(_owner);
+            PHServer.serverInstance.RPC_Disconnect(_owner);
             photonView.RPC("RPC_DisconnectOwner", _owner);
         }
         else

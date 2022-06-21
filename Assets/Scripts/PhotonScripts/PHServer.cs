@@ -28,7 +28,7 @@ public class PHServer : MonoBehaviourPunCallbacks
             if (photonView.IsMine)
             {
                 //cuando se conecte un cliente se va a ejecutar esta funcion, por eso usamos el target.allbuffered
-                photonView.RPC("SetServer", RpcTarget.AllBuffered, PhotonNetwork.LocalPlayer, 1); 
+                photonView.RPC("SetServer", RpcTarget.AllBuffered, PhotonNetwork.LocalPlayer, 1);                
             }
         }
     }
@@ -90,6 +90,12 @@ public class PHServer : MonoBehaviourPunCallbacks
         photonView.RPC("RPC_Shoot", _phServer, player);
     }
 
+    public void RequestDisconnection(Player player)
+    {
+        photonView.RPC("RPC_Disconnect", _phServer, player);
+        PhotonNetwork.SendAllOutgoingCommands();
+    }
+
     #endregion
 
     #region Funciones del server original
@@ -112,7 +118,7 @@ public class PHServer : MonoBehaviourPunCallbacks
         }
     }
 
-    public void PlayerDisconnect(Player player)
+    public void RPC_Disconnect(Player player)
     {
         PhotonNetwork.Destroy(_dictionaryModels[player].gameObject);
         _dictionaryModels.Remove(player);
