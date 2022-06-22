@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class CameraMove : MonoBehaviour
 {
+    /*
     [SerializeField] Transform playerTransform;
     [SerializeField] float sensitivity = 100f;
     float xRot = 0f;
@@ -27,4 +28,5 @@ public class CameraMove : MonoBehaviour
                 Cursor.lockState = CursorLockMode.Locked;
         }
     }
+    */
 }

@@ -56,29 +56,25 @@ public class CharacterA : MonoBehaviourPun
         matBody.color = Color.blue;
     }
 
-    public void Move(float dirHorizontal, float dirForward)
+    public void Move(float dirHorizontal, float dirForward, Vector3 Rotation, float verticalRot)
     {
-        Debug.Log(transform.forward);
-
+        //player move
         dir = transform.forward * dirForward + transform.right * dirHorizontal;
         dir.Normalize();
-
-        Debug.Log(dir);
-
         _rb.MovePosition(_rb.position + dir * _speed * Time.deltaTime);
+
+        //animation
+        _anim.SetBool("isMoving", true);
+
+        //camera  move + rot
+        transform.Rotate(Rotation);
+        cameraView.localRotation = Quaternion.Euler(verticalRot, 0f, 0f);
     }
-    /*
-    private void FixedUpdate()
+
+    public void stopRun()
     {
-        if(_rb.velocity.sqrMagnitude > 0.1f)
-        {
-            _anim.SetBool("isMoving", true);
-        }
-        else
-        {
-            _anim.SetBool("isMoving", false);
-        }
-    }*/
+        _anim.SetBool("isMoving", false);
+    }
 
     public void Jump()
     {

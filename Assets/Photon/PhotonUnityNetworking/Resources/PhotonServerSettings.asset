@@ -48,6 +48,9 @@ MonoBehaviour:
   - RPC_Move
   - RPC_Shoot
   - RPC_Jump
+  - RPC_Anim
+  - RPC_Disconnect
+  - RPC_loadLevel
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1
