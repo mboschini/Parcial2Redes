@@ -6,22 +6,9 @@ using Photon.Realtime;
 
 public class RaycastBullet : MonoBehaviourPun
 {
+    /*
     CharacterA _owner;
     float _dmg;
-
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        if (!photonView.IsMine) return;
-
-        transform.position += transform.forward * Time.deltaTime;
-    }
-
     public RaycastBullet SetDmg(float dmg)
     {
         _dmg = dmg;
@@ -42,5 +29,5 @@ public class RaycastBullet : MonoBehaviourPun
 
         PhotonNetwork.Destroy(gameObject);
     }
-
+    */
 }

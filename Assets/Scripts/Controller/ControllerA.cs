@@ -19,12 +19,17 @@ public class ControllerA : MonoBehaviourPun
 
     void Update()
     {
-        _x = Input.GetAxis("Vertical");
-        _z = Input.GetAxis("Horizontal");
+        _z = Input.GetAxis("Vertical");
+        _x = Input.GetAxis("Horizontal");
 
         if (Input.GetKeyDown(KeyCode.Space))
         {
             PHServer.serverInstance.RequestJump(_localPlayer);
+        }
+
+        if (Input.GetKeyDown(KeyCode.Mouse0))
+        {
+            PHServer.serverInstance.RequestShoot(_localPlayer);
         }
     }
 
@@ -32,15 +37,7 @@ public class ControllerA : MonoBehaviourPun
     {
         if (_x != 0 || _z!=0)
         {
-            var dirx = Vector3.right * _x * -1f;
-            var dirz = Vector3.forward * _z;
-
-            var dir = dirx + dirz;
-
-            if (dir.sqrMagnitude > 1)
-                dir.Normalize();
-
-            PHServer.serverInstance.RequestMove(_localPlayer, dir);
+            PHServer.serverInstance.RequestMove(_localPlayer, _x, _z);
         }
     }
 

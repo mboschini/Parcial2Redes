@@ -82,9 +82,9 @@ public class PHServer : MonoBehaviourPunCallbacks
 
     #region Request que reciben los servidores avatares
 
-    public void RequestMove(Player player, Vector3 dir)
+    public void RequestMove(Player player, float dirHorizontal, float dirForward)
     {
-        photonView.RPC("RPC_Move", _phServer, player, dir);
+        photonView.RPC("RPC_Move", _phServer, player, dirHorizontal, dirForward);
     }
 
     public void RequestJump(Player player)
@@ -108,11 +108,11 @@ public class PHServer : MonoBehaviourPunCallbacks
     #region Funciones del server original
 
     [PunRPC]
-    public void RPC_Move(Player playerRequest, Vector3 dir)
+    public void RPC_Move(Player playerRequest, float dirHorizontal, float dirForward)
     {
         if (_dictionaryModels.ContainsKey(playerRequest))
         {
-            _dictionaryModels[playerRequest].Move(dir);
+            _dictionaryModels[playerRequest].Move(dirHorizontal, dirForward);
         }
     }
 

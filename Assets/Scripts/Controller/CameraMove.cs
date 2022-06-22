@@ -18,10 +18,13 @@ public class CameraMove : MonoBehaviour
     {
         float mousex = Input.GetAxis("Mouse X") * sensitivity * Time.deltaTime;
         playerTransform.Rotate(Vector3.up * mousex);
-        /*
-        float mousey = Input.GetAxis("Mouse Y") * sensitivity * Time.deltaTime;
-        xRot -= mousey;
-        xRot = Mathf.Clamp(xRot, -90f, 90f);
-        transform.localRotation = Quaternion.Euler(xRot, 0f, 0f);*/
+
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            if(Cursor.lockState == CursorLockMode.Locked)
+                Cursor.lockState = CursorLockMode.None;
+            else
+                Cursor.lockState = CursorLockMode.Locked;
+        }
     }
 }

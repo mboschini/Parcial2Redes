@@ -8,6 +8,7 @@ public class CharacterA : MonoBehaviourPun
 {
     Player _owner;
     Rigidbody _rb;
+    Animator _anim;
 
     [SerializeField] float _maxLife;
     float _currentLife;
@@ -21,6 +22,8 @@ public class CharacterA : MonoBehaviourPun
     [SerializeField] float groundRadius;
     [SerializeField] LayerMask groundMask;
     bool isGrounded;
+    Vector3 dir;
+    [SerializeField] Transform cameraView;
 
     private void Awake()
     {
@@ -33,10 +36,11 @@ public class CharacterA : MonoBehaviourPun
     {
         _owner = player;
         _rb = GetComponent<Rigidbody>();
+        _anim = GetComponent<Animator>();
         _currentLife = _maxLife;
         matHead.color = Color.yellow;
         matBody.color = Color.yellow;
-
+        dir = new Vector3();
         photonView.RPC("SetLocalParams", _owner, _currentLife);
 
         return this;
@@ -52,11 +56,29 @@ public class CharacterA : MonoBehaviourPun
         matBody.color = Color.blue;
     }
 
-    public void Move(Vector3 dir)
+    public void Move(float dirHorizontal, float dirForward)
     {
-        Debug.Log(dir *_speed * Time.deltaTime);
+        Debug.Log(transform.forward);
+
+        dir = transform.forward * dirForward + transform.right * dirHorizontal;
+        dir.Normalize();
+
+        Debug.Log(dir);
+
         _rb.MovePosition(_rb.position + dir * _speed * Time.deltaTime);
     }
+    /*
+    private void FixedUpdate()
+    {
+        if(_rb.velocity.sqrMagnitude > 0.1f)
+        {
+            _anim.SetBool("isMoving", true);
+        }
+        else
+        {
+            _anim.SetBool("isMoving", false);
+        }
+    }*/
 
     public void Jump()
     {
@@ -69,10 +91,21 @@ public class CharacterA : MonoBehaviourPun
     
     public void Shoot()
     {
-        //shoot behaviour
-        //PhotonNetwork.Instantiate(_bulletPrefab.name, _bulletSpawnerTranform.position, transform.rotation)
-        //                            .GetComponent<RaycastBullet>()
-        //                            .SetDmg(_dmg);
+        int layerMask = 1 << 8;
+
+        RaycastHit hit;
+
+        if (Physics.Raycast(cameraView.position, cameraView.forward, out hit, Mathf.Infinity, layerMask))
+        {
+            Debug.DrawRay(cameraView.position, cameraView.forward * hit.distance, Color.yellow, 1f);
+            Debug.Log("Did Hit " + hit.transform.gameObject.name);
+            hit.transform.gameObject.GetComponent<CharacterA>().TakeDamage(_dmg);
+        }
+        else
+        {
+            Debug.DrawRay(cameraView.position, cameraView.forward * 1000, Color.white, 1f);
+            Debug.Log("Did not Hit");
+        }
     }
 
     public void TakeDamage(float dmg)
