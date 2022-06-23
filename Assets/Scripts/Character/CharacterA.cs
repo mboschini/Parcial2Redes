@@ -7,8 +7,8 @@ using Photon.Realtime;
 public class CharacterA : MonoBehaviourPun
 {
     Player _owner;
-    Rigidbody _rb;
-    Animator _anim;
+    [SerializeField] Rigidbody _rb;
+    [SerializeField] Animator _anim;
 
     [SerializeField] float _maxLife;
     float _currentLife;
@@ -35,8 +35,8 @@ public class CharacterA : MonoBehaviourPun
     public CharacterA SetInitialParams(Player player) 
     {
         _owner = player;
-        _rb = GetComponent<Rigidbody>();
-        _anim = GetComponent<Animator>();
+        //_rb = GetComponent<Rigidbody>();
+        //_anim = GetComponent<Animator>();
         _currentLife = _maxLife;
         matHead.color = Color.yellow;
         matBody.color = Color.yellow;

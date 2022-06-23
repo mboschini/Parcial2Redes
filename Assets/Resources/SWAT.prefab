@@ -1347,7 +1347,7 @@ MonoBehaviour:
   ShowParameterInspector: 1
   m_SynchronizeParameters:
   - Type: 4
-    SynchronizeType: 0
+    SynchronizeType: 1
     Name: isMoving
   m_SynchronizeLayers:
   - SynchronizeType: 0
@@ -1451,6 +1451,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 608997d083d44c140b42d1a5f57394f6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _rb: {fileID: 4624478594200464849}
+  _anim: {fileID: 4624478594200464851}
   _maxLife: 100
   _speed: 5
   _jumpForce: 5
