@@ -23,7 +23,7 @@ public class CharacterA : MonoBehaviourPun
     [SerializeField] LayerMask groundMask;
     bool isGrounded;
     Vector3 dir;
-    [SerializeField] Transform cameraView;
+    [SerializeField] Camera cameraView;
 
     private void Awake()
     {
@@ -42,7 +42,6 @@ public class CharacterA : MonoBehaviourPun
         matBody.color = Color.yellow;
         dir = new Vector3();
         photonView.RPC("SetLocalParams", _owner, _currentLife);
-
         return this;
     }
 
@@ -52,6 +51,8 @@ public class CharacterA : MonoBehaviourPun
     void SetLocalParams(float life) 
     {
         _currentLife = _maxLife = life;
+        cameraView.enabled = true;
+
         matHead.color = Color.blue;
         matBody.color = Color.blue;
     }
@@ -68,7 +69,7 @@ public class CharacterA : MonoBehaviourPun
 
         //camera  move + rot
         transform.Rotate(Rotation);
-        cameraView.localRotation = Quaternion.Euler(verticalRot, 0f, 0f);
+        cameraView.transform.localRotation = Quaternion.Euler(verticalRot, 0f, 0f);
     }
 
     public void stopRun()
@@ -91,15 +92,15 @@ public class CharacterA : MonoBehaviourPun
 
         RaycastHit hit;
 
-        if (Physics.Raycast(cameraView.position, cameraView.forward, out hit, Mathf.Infinity, layerMask))
+        if (Physics.Raycast(cameraView.transform.position, cameraView.transform.forward, out hit, Mathf.Infinity, layerMask))
         {
-            Debug.DrawRay(cameraView.position, cameraView.forward * hit.distance, Color.yellow, 1f);
+            Debug.DrawRay(cameraView.transform.position, cameraView.transform.forward * hit.distance, Color.yellow, 1f);
             Debug.Log("Did Hit " + hit.transform.gameObject.name);
             hit.transform.gameObject.GetComponent<CharacterA>().TakeDamage(_dmg);
         }
         else
         {
-            Debug.DrawRay(cameraView.position, cameraView.forward * 1000, Color.white, 1f);
+            Debug.DrawRay(cameraView.transform.position, cameraView.transform.forward * 1000, Color.white, 1f);
             Debug.Log("Did not Hit");
         }
     }
