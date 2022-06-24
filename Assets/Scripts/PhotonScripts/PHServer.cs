@@ -102,6 +102,11 @@ public class PHServer : MonoBehaviourPunCallbacks
         photonView.RPC("RPC_Shoot", _phServer, player);
     }
 
+    public void RequestLose(Player player)
+    {
+        photonView.RPC("RPC_Win", _phServer, player);
+    }
+
     public void RequestDisconnection(Player player)
     {
         photonView.RPC("RPC_Disconnect", _phServer, player);
@@ -145,6 +150,18 @@ public class PHServer : MonoBehaviourPunCallbacks
         if (_dictionaryModels.ContainsKey(playerRequest))
         {
             _dictionaryModels[playerRequest].Shoot();
+        }
+    }
+
+    [PunRPC]
+    public void RPC_Win(Player playerRequest)
+    {
+        foreach(var player in _dictionaryModels)
+        {
+            if(player.Key != playerRequest)
+                player.Value.Win();
+            else if(player.Key == playerRequest)
+                player.Value.Lose();
         }
     }
 

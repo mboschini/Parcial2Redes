@@ -31,6 +31,10 @@ public class CharacterA : MonoBehaviourPun
     [SerializeField] ParticleSystem bulletsPS;
     [SerializeField] ParticleSystem muzzleFlashPS;
 
+    [SerializeField] GameObject loseScreen;
+    [SerializeField] GameObject winScreen;
+    [SerializeField] GameObject canvas;
+
     private void Awake()
     {
         matHead.color = Color.red;
@@ -59,6 +63,7 @@ public class CharacterA : MonoBehaviourPun
         _currentLife = _maxLife = life;
         cameraView.enabled = true;
         audioListener.enabled = true;
+        canvas.SetActive(true);
 
         matHead.color = Color.blue;
         matBody.color = Color.blue;
@@ -80,7 +85,7 @@ public class CharacterA : MonoBehaviourPun
         {
             _anim.SetBool("isMoving", true);
         }
-        
+
     }
 
     public void CameraMove(Vector3 Rotation, float verticalRot)
@@ -134,8 +139,11 @@ public class CharacterA : MonoBehaviourPun
         _currentLife -= dmg;
         if (_currentLife <= 0)
         {
+            //Lose();
+            PHServer.serverInstance.RequestLose(_owner);
+            /*
             PHServer.serverInstance.RPC_Disconnect(_owner);
-            photonView.RPC("RPC_DisconnectOwner", _owner);
+            photonView.RPC("RPC_DisconnectOwner", _owner);*/
         }
         else
         {
@@ -143,10 +151,33 @@ public class CharacterA : MonoBehaviourPun
         }
     }
 
+    public void Lose()
+    {
+        photonView.RPC("RPC_ShowLose", _owner);
+    }
+
+    public void Win()
+    {
+        photonView.RPC("RPC_ShowWin", _owner);
+    }
+
     [PunRPC]
-    void RPC_DisconnectOwner()
+    public void RPC_ShowWin()
+    {
+        winScreen.SetActive(true);
+    }
+
+    [PunRPC]
+    public void RPC_ShowLose()
+    {
+        loseScreen.SetActive(true);
+    }
+
+    [PunRPC]
+    public void RPC_DisconnectOwner()
     {
         PhotonNetwork.Disconnect();
+        PhotonNetwork.LoadLevel(0);
     }
 
     [PunRPC]

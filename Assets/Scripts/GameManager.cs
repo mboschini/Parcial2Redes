@@ -21,6 +21,6 @@ public class GameManager : MonoBehaviour
     public void ExitGame()
     {
         PhotonNetwork.Disconnect();
-        PhotonNetwork.LoadLevel("MainMenu");
+        PhotonNetwork.LoadLevel(0);
     }
 }
