@@ -1,10 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 using Photon.Pun;
 using Photon.Realtime;
 
-public class CharacterA : MonoBehaviourPun
+public class CharacterA : MonoBehaviourPun, IPunObservable
 {
     Player _owner;
     [SerializeField] Rigidbody _rb;
@@ -34,6 +35,15 @@ public class CharacterA : MonoBehaviourPun
     [SerializeField] GameObject loseScreen;
     [SerializeField] GameObject winScreen;
     [SerializeField] GameObject canvas;
+    [SerializeField] GameObject tabScreen;
+    [SerializeField] LifeBar lifeBar;
+    
+    [SerializeField] GameObject _granadePrefab;
+    [SerializeField] Transform _granadeSpawner;
+
+    [SerializeField] AudioSource source;
+    [SerializeField] AudioClip ShootRifleSound;
+    [SerializeField] AudioClip ExplodeGranade;
 
     private void Awake()
     {
@@ -45,13 +55,12 @@ public class CharacterA : MonoBehaviourPun
     public CharacterA SetInitialParams(Player player)
     {
         _owner = player;
-        //_rb = GetComponent<Rigidbody>();
-        //_anim = GetComponent<Animator>();
         _currentLife = _maxLife;
         matHead.color = Color.yellow;
         matBody.color = Color.yellow;
         dir = new Vector3();
         photonView.RPC("SetLocalParams", _owner, _currentLife);
+        photonView.RPC("RPC_PlayerRPCColor", RpcTarget.Others, _owner);
         return this;
     }
 
@@ -61,12 +70,28 @@ public class CharacterA : MonoBehaviourPun
     void SetLocalParams(float life)
     {
         _currentLife = _maxLife = life;
+        lifeBar.UpdateBar(_currentLife);
         cameraView.enabled = true;
         audioListener.enabled = true;
         canvas.SetActive(true);
 
         matHead.color = Color.blue;
         matBody.color = Color.blue;
+    }
+
+    [PunRPC]
+    void RPC_PlayerRPCColor(Player clientOwner)
+    {
+        if (PhotonNetwork.LocalPlayer != clientOwner)
+        {
+            matHead.color = Color.red;
+            matBody.color = Color.red;
+        }
+        else
+        {
+            matHead.color = Color.blue;
+            matBody.color = Color.blue;
+        }
     }
 
     public void Move(float dirHorizontal, float dirForward)
@@ -116,6 +141,8 @@ public class CharacterA : MonoBehaviourPun
 
         _anim.SetBool("isShooting", true);
 
+        source.PlayOneShot(ShootRifleSound, 0.2f);
+
         if (Physics.Raycast(cameraView.transform.position, cameraView.transform.forward, out hit, Mathf.Infinity, layerMask))
         {
             Debug.DrawRay(cameraView.transform.position, cameraView.transform.forward * hit.distance, Color.yellow, 1f);
@@ -129,7 +156,24 @@ public class CharacterA : MonoBehaviourPun
         }
     }
 
-    public void StopShooting()
+    public void ShootGranade()
+    {
+        var ammo = PhotonNetwork.Instantiate(_granadePrefab.name, _granadeSpawner.position, _granadeSpawner.rotation)
+            .GetComponent<Granade>()
+            .setOwner(this, _owner);
+
+        ammo.GetComponent<Rigidbody>().AddForce(ammo.transform.forward * 10f, ForceMode.VelocityChange);
+
+        StartCoroutine(explodeGranade());
+    }
+
+    IEnumerator explodeGranade()
+    {
+        yield return new WaitForSeconds(3f);
+        source.PlayOneShot(ExplodeGranade,1f);
+    }
+
+        public void StopShooting()
     {
         _anim.SetBool("isShooting", false);
     }
@@ -137,18 +181,39 @@ public class CharacterA : MonoBehaviourPun
     public void TakeDamage(float dmg)
     {
         _currentLife -= dmg;
+        lifeBar.UpdateBar(_currentLife / _maxLife);
+
         if (_currentLife <= 0)
         {
-            //Lose();
             PHServer.serverInstance.RequestLose(_owner);
-            /*
-            PHServer.serverInstance.RPC_Disconnect(_owner);
-            photonView.RPC("RPC_DisconnectOwner", _owner);*/
-        }
+        }/*
         else
         {
             photonView.RPC("RPC_LifeChange", _owner, _currentLife);
-        }
+        }*/
+    }
+
+    public void ShowTabScreen()
+    {
+        photonView.RPC("RPC_LocalShowTabScreen", _owner);
+    }
+
+    public void CloseTabScreen()
+    {
+        photonView.RPC("RPC_LocalCloseTabScreen", _owner);
+    }
+
+    [PunRPC]
+    void RPC_LocalShowTabScreen()
+    {
+        tabScreen.SetActive(true);
+        tabScreen.GetComponent<ShowNickNames>().UpdatePlayer(PhotonNetwork.PlayerList);
+    }
+
+    [PunRPC]
+    void RPC_LocalCloseTabScreen()
+    {
+        tabScreen.SetActive(false);
     }
 
     public void Lose()
@@ -173,22 +238,30 @@ public class CharacterA : MonoBehaviourPun
         loseScreen.SetActive(true);
     }
 
-    [PunRPC]
-    public void RPC_DisconnectOwner()
+    public void DisconnectOwner()
     {
-        PhotonNetwork.Disconnect();
-        PhotonNetwork.LoadLevel(0);
+        Application.Quit();
     }
-
+    /*
     [PunRPC]
     void RPC_LifeChange(float _currentlife)
     {
         _currentLife = _currentlife;
-    }
+    }*/
 
-    //public void HandleParticles()
-    //{
-    //    muzzleFlashPS.Emit(44);
-    //    bulletsPS.Emit(2);
-    //}
+    public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+    {
+        if (stream.IsWriting)
+        {
+            stream.SendNext(_currentLife);
+            stream.SendNext(_maxLife);
+        }
+        else
+        {
+            _currentLife = (float)stream.ReceiveNext();
+            _maxLife = (float)stream.ReceiveNext();
+
+            lifeBar.UpdateBar(_currentLife / _maxLife);
+        }
+    }
 }

@@ -13,9 +13,10 @@ public class ControllerA : MonoBehaviourPun
     float mousey = 0f;
     float _x;
     float _z;
-
+    float granadeCD = 2f;
+    float granadeCDtimer = 0;
+    bool canShootGrande = true;
     float timer;
-    float noInputTimer;
 
     void Start()
     {
@@ -40,10 +41,25 @@ public class ControllerA : MonoBehaviourPun
             PHServer.serverInstance.RequestShoot(_localPlayer);
         }
 
+        if (Input.GetKeyDown(KeyCode.Mouse1) && canShootGrande)
+        {
+            canShootGrande = false;
+            PHServer.serverInstance.RequestShootGranade(_localPlayer);
+        }
+
+        if (Input.GetKeyDown(KeyCode.Tab))
+        {
+            PHServer.serverInstance.RequestShowTabScreen(_localPlayer);
+        }
+
+        if (Input.GetKeyUp(KeyCode.Tab))
+        {
+            PHServer.serverInstance.RequestCloseTabScreen(_localPlayer);
+        }
+
         //camera
         mousex = Input.GetAxis("Mouse X") * sensitivity * Time.deltaTime;
         mousey = Input.GetAxis("Mouse Y") * sensitivity * Time.deltaTime;
-        //mousey = Mathf.Clamp(mousey, -45f, 45f);
 
         //cursor
         if (Input.GetKeyDown(KeyCode.Escape))
@@ -52,6 +68,16 @@ public class ControllerA : MonoBehaviourPun
                 Cursor.lockState = CursorLockMode.None;
             else
                 Cursor.lockState = CursorLockMode.Locked;
+        }
+
+        if (!canShootGrande)
+        {
+            granadeCDtimer += Time.deltaTime;
+            if (granadeCDtimer >= granadeCD)
+            {
+                canShootGrande = true;
+                granadeCDtimer = 0f;
+            }
         }
     }
 
@@ -73,8 +99,6 @@ public class ControllerA : MonoBehaviourPun
             PHServer.serverInstance.RequestCameraMove(_localPlayer, Vector3.up * mousex, mousey);
         }
     }
-
-    //agregar timeslicing de toma de inputs PackagePerSecond del phserver, no para los inputs getkeydown
 
 
     private void OnApplicationQuit()

@@ -56,6 +56,13 @@ MonoBehaviour:
   - RPC_Win
   - RPC_ShowLose
   - RPC_ShowWin
+  - RPC_CloseTabScreen
+  - RPC_ShowTabScreen
+  - RPC_LocalCloseTabScreen
+  - RPC_LocalShowTabScreen
+  - RPC_setRPCColor
+  - RPC_ShootGranade
+  - RPC_PlayerRPCColor
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1

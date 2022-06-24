@@ -73,11 +73,21 @@ public class PHServer : MonoBehaviourPunCallbacks
 
         //se ejecuta en el servidor original, por lo que se puede tener un manager que gestione las posiciones
         //de todos los players y se llamaria desde aca.
-        CharacterA newCharacter = PhotonNetwork.Instantiate(_characterPrefab.name, _player1pos.position, _player1pos.rotation)
-                                                            .GetComponent<CharacterA>()
-                                                            .SetInitialParams(newPlayer);
+        if (_dictionaryModels.Count == 0)
+        {
+            CharacterA newCharacter = PhotonNetwork.Instantiate(_characterPrefab.name, _player1pos.position, _player1pos.rotation)
+                                                                .GetComponent<CharacterA>()
+                                                                .SetInitialParams(newPlayer);
+            _dictionaryModels.Add(newPlayer, newCharacter);
+        }
+        else
+        {
+            CharacterA newCharacter = PhotonNetwork.Instantiate(_characterPrefab.name, _player2pos.position, _player2pos.rotation)
+                                                                .GetComponent<CharacterA>()
+                                                                .SetInitialParams(newPlayer);
+            _dictionaryModels.Add(newPlayer, newCharacter);
+        }
 
-        _dictionaryModels.Add(newPlayer, newCharacter);
     }
 
     #region Request que reciben los servidores avatares
@@ -101,6 +111,10 @@ public class PHServer : MonoBehaviourPunCallbacks
     {
         photonView.RPC("RPC_Shoot", _phServer, player);
     }
+    public void RequestShootGranade(Player player)
+    {
+        photonView.RPC("RPC_ShootGranade", _phServer, player);
+    }
 
     public void RequestLose(Player player)
     {
@@ -113,9 +127,19 @@ public class PHServer : MonoBehaviourPunCallbacks
         PhotonNetwork.SendAllOutgoingCommands();
     }
 
-    #endregion
+    public void RequestShowTabScreen(Player player)
+    {
+        photonView.RPC("RPC_ShowTabScreen", _phServer, player);
+    }
 
-    #region Funciones del server original
+    public void RequestCloseTabScreen(Player player)
+    {
+        photonView.RPC("RPC_CloseTabScreen", _phServer, player);
+    }
+
+#endregion
+
+#region Funciones del server original
 
     [PunRPC]
     public void RPC_Move(Player playerRequest, float dirHorizontal, float dirForward)
@@ -150,6 +174,34 @@ public class PHServer : MonoBehaviourPunCallbacks
         if (_dictionaryModels.ContainsKey(playerRequest))
         {
             _dictionaryModels[playerRequest].Shoot();
+        }
+    }
+
+    [PunRPC]
+    public void RPC_ShootGranade(Player playerRequest)
+    {
+        if (_dictionaryModels.ContainsKey(playerRequest))
+        {
+            _dictionaryModels[playerRequest].ShootGranade();
+        }
+    }
+    
+
+    [PunRPC]
+    public void RPC_ShowTabScreen(Player playerRequest)
+    {
+        if (_dictionaryModels.ContainsKey(playerRequest))
+        {
+            _dictionaryModels[playerRequest].ShowTabScreen();
+        }
+    }
+
+    [PunRPC]
+    public void RPC_CloseTabScreen(Player playerRequest)
+    {
+        if (_dictionaryModels.ContainsKey(playerRequest))
+        {
+            _dictionaryModels[playerRequest].CloseTabScreen();
         }
     }
 
