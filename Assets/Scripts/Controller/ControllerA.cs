@@ -14,6 +14,9 @@ public class ControllerA : MonoBehaviourPun
     float _x;
     float _z;
 
+    float timer;
+    float noInputTimer;
+
     void Start()
     {
         DontDestroyOnLoad(gameObject);  //va a estar en la escena del main menu y no quiero que se destruya cuando cambio de escena
@@ -54,9 +57,20 @@ public class ControllerA : MonoBehaviourPun
 
     private void FixedUpdate()
     {
-        if (_x != 0 || _z!=0 || mousex != 0)
+        timer += Time.fixedDeltaTime;
+
+        if (_x != 0 || _z != 0)
         {
-            PHServer.serverInstance.RequestMove(_localPlayer, _x, _z, Vector3.up * mousex, -mousey);
+            PHServer.serverInstance.RequestMove(_localPlayer, _x, _z);
+        }
+        else if (_x == 0 && _z == 0 && timer > .1f)
+        {
+            PHServer.serverInstance.RequestMove(_localPlayer, _x, _z);
+        }
+
+        if (mousex != 0 || mousey != 0)
+        {
+            PHServer.serverInstance.RequestCameraMove(_localPlayer, Vector3.up * mousex, mousey);
         }
     }
 

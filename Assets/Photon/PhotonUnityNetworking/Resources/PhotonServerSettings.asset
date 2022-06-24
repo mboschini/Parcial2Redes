@@ -52,6 +52,7 @@ MonoBehaviour:
   - RPC_Disconnect
   - RPC_loadLevel
   - startRun
+  - RPC_CameraMove
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1

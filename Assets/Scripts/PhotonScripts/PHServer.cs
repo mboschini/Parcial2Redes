@@ -82,9 +82,14 @@ public class PHServer : MonoBehaviourPunCallbacks
 
     #region Request que reciben los servidores avatares
 
-    public void RequestMove(Player player, float dirHorizontal, float dirForward, Vector3 rotation, float verticalRot)
+    public void RequestMove(Player player, float dirHorizontal, float dirForward)
     {
-        photonView.RPC("RPC_Move", _phServer, player, dirHorizontal, dirForward, rotation, verticalRot);
+        photonView.RPC("RPC_Move", _phServer, player, dirHorizontal, dirForward);
+    }
+
+    public void RequestCameraMove(Player player, Vector3 rotation, float verticalRot)
+    {
+        photonView.RPC("RPC_CameraMove", _phServer, player, rotation, verticalRot);
     }
 
     public void RequestJump(Player player)
@@ -108,11 +113,20 @@ public class PHServer : MonoBehaviourPunCallbacks
     #region Funciones del server original
 
     [PunRPC]
-    public void RPC_Move(Player playerRequest, float dirHorizontal, float dirForward, Vector3 Rotation, float verticalRot)
+    public void RPC_Move(Player playerRequest, float dirHorizontal, float dirForward)
     {
         if (_dictionaryModels.ContainsKey(playerRequest))
         {
-            _dictionaryModels[playerRequest].Move(dirHorizontal, dirForward, Rotation, verticalRot);
+            _dictionaryModels[playerRequest].Move(dirHorizontal, dirForward);
+        }
+    }
+
+    [PunRPC]
+    public void RPC_CameraMove(Player playerRequest, Vector3 Rotation, float verticalRot)
+    {
+        if (_dictionaryModels.ContainsKey(playerRequest))
+        {
+            _dictionaryModels[playerRequest].CameraMove(Rotation, verticalRot);
         }
     }
 
